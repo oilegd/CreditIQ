@@ -209,24 +209,29 @@ def bias_paragraph(r: Mapping[str, Any]) -> str:
 
     return (
         f"{int(real['n_unresolved_added']):,} loans issued in the test window were excluded as "
-        f"unresolved (concentrated in 2014 60-month vintages). They are survivors at the snapshot, "
-        f"so excluding them enriches the remaining 60-month loans with charge-offs. Scoring them "
-        f"with the selected model ({sel}) and adding them back:\n\n"
-        f"* realistic labelling (Current/Grace repaid, Late adverse): ROC-AUC **{real['roc_auc']:.4f}** "
-        f"(reported {rep['roc_auc']:.4f}); adverse prevalence {real['prevalence']:.4f} vs mean "
-        f"calibrated prediction {real['mean_predicted']:.4f}; 60-month loans: observed "
+        f"unresolved (concentrated in 2014 60-month vintages); their true outcomes are unknown. "
+        f"They are survivors at the snapshot, so excluding them enriches the remaining 60-month "
+        f"loans with charge-offs. Scoring them with the selected model ({sel}) and adding them "
+        f"back under **assumed** labels (hypothetical scenarios, not observed outcomes):\n\n"
+        f"* assumed: Current/Grace repaid, Late adverse - ROC-AUC **{real['roc_auc']:.4f}** "
+        f"(reported {rep['roc_auc']:.4f}); scenario adverse rate {real['prevalence']:.4f} vs mean "
+        f"calibrated prediction {real['mean_predicted']:.4f}; 60-month loans: scenario rate "
         f"{real['prevalence_60m']:.4f} vs predicted {real['mean_predicted_60m']:.4f};\n"
-        f"* all unresolved repaid: ROC-AUC {allrep['roc_auc']:.4f};\n"
+        f"* assumed: all unresolved repaid - ROC-AUC {allrep['roc_auc']:.4f};\n"
         f"* extreme bound (all unresolved adverse - implausible): ROC-AUC {ext['roc_auc']:.4f}.\n\n"
-        f"On fully resolved 36-month loans (no exclusion bias) the ROC-AUC is **{s36['roc_auc']:.4f}** "
-        f"with mean prediction {s36['mean_predicted']:.4f} vs observed {s36['prevalence']:.4f}.\n\n"
-        f"**Interpretation:** the reported test ROC-AUC ({rep['roc_auc']:.4f}) is optimistic; a "
-        f"realistic estimate is about {real['roc_auc']:.3f}. On the reported test set 60-month loans "
-        f"appear {_direction(rep['prevalence_60m'], rep['mean_predicted_60m'])} "
-        f"(observed {rep['prevalence_60m']:.3f} vs predicted {rep['mean_predicted_60m']:.3f}); with "
-        f"realistic labels they are {_direction(real['prevalence_60m'], real['mean_predicted_60m'])} "
-        f"(observed {real['prevalence_60m']:.3f} vs predicted {real['mean_predicted_60m']:.3f}). "
-        f"The calibrator was fitted on 2014 Q2, which shares the same exclusion bias."
+        f"On fully resolved 36-month loans (no exclusion bias, observed outcomes) the ROC-AUC is "
+        f"**{s36['roc_auc']:.4f}** with mean prediction {s36['mean_predicted']:.4f} vs observed "
+        f"{s36['prevalence']:.4f}.\n\n"
+        f"**Interpretation:** the reported test ROC-AUC ({rep['roc_auc']:.4f}) is likely optimistic: "
+        f"both plausible scenarios give lower values ({allrep['roc_auc']:.3f}-{real['roc_auc']:.3f}); "
+        f"only the implausible all-adverse bound is higher. The true value cannot be computed from "
+        f"this snapshot. On the reported test set 60-month loans appear "
+        f"{_direction(rep['prevalence_60m'], rep['mean_predicted_60m'])} (observed "
+        f"{rep['prevalence_60m']:.3f} vs predicted {rep['mean_predicted_60m']:.3f}); under the "
+        f"assumed scenario they would be "
+        f"{_direction(real['prevalence_60m'], real['mean_predicted_60m'])} (scenario rate "
+        f"{real['prevalence_60m']:.3f} vs predicted {real['mean_predicted_60m']:.3f}). The "
+        f"calibrator was fitted on 2014 Q2, which shares the same exclusion bias."
     )
 
 
@@ -555,7 +560,7 @@ def write_model_card(path: Path, results: Mapping[str, Mapping[str, Any]], prima
 | Log loss | {sel_row["log_loss"]:.4f} | {dummy_row["log_loss"]:.4f} |
 | Expected calibration error | {sel_row["ece"]:.4f} | {dummy_row["ece"]:.4f} |
 | Prevalence | {sel_row["prevalence"]:.4f} | {dummy_row["prevalence"]:.4f} |
-| ROC-AUC incl. excluded unresolved loans (realistic labels) | {real_auc} | - |
+| ROC-AUC incl. excluded unresolved loans (assumed scenario: Current/Grace repaid, Late adverse; not observed) | {real_auc} | - |
 | ROC-AUC on fully resolved 36-month loans | {auc36} | - |
 
 **Headline caveat.** {bias_paragraph(r)}

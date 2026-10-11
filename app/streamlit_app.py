@@ -11,8 +11,16 @@ it never trains models.
 from __future__ import annotations
 
 import os
+import sys
 from datetime import date
 from pathlib import Path
+
+# Deployments that install only requirements.txt (e.g. Streamlit Community Cloud) do not
+# install the local package; fall back to the in-repo source tree.
+try:
+    import creditiq  # noqa: F401
+except ModuleNotFoundError:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 import matplotlib
 
@@ -186,7 +194,7 @@ def get_cloud(processed_dir: str, feature_set: str, split: str) -> pd.DataFrame 
     return pd.read_parquet(p) if p.is_file() else None
 
 
-@st.cache_data(show_spinner="Building Mapper graph ...")
+@st.cache_data(show_spinner="Building Mapper graph ...", max_entries=32)
 def run_mapper(
     processed_dir: str,
     feature_set: str,
@@ -223,7 +231,7 @@ def run_mapper(
     }
 
 
-@st.cache_data(show_spinner="Computing persistent homology ...")
+@st.cache_data(show_spinner="Computing persistent homology ...", max_entries=8)
 def run_persistence(
     processed_dir: str, feature_set: str, split: str, n: int, seed: int
 ) -> pd.DataFrame:
@@ -327,10 +335,11 @@ def page_overview(cfg: Config, res: dict | None) -> None:
     if realistic is not None:
         st.warning(
             f"**Read the headline AUC with care.** {int(realistic['n_unresolved_added']):,} test-window "
-            f"loans (all 60-month) were excluded as unresolved. If they are included with a realistic "
-            f"label (Current/Grace repaid, Late adverse) the test ROC-AUC is "
-            f"**{realistic['roc_auc']:.3f}** instead of {row['roc_auc']:.3f}. On fully resolved "
-            f"36-month loans it is **{s36['roc_auc'].iloc[0]:.3f}**. See *Model Performance → Robustness*.",
+            f"loans were excluded as unresolved (outcome unknown at the snapshot). Under an *assumed* "
+            f"labelling (Current/Grace repaid, Late adverse) the test ROC-AUC would be "
+            f"**{realistic['roc_auc']:.3f}** instead of {row['roc_auc']:.3f}; this is a scenario, not an "
+            f"observed result. On fully resolved 36-month loans it is "
+            f"**{s36['roc_auc'].iloc[0]:.3f}**. See *Model Performance → Robustness*.",
             icon="🔎",
         )
 

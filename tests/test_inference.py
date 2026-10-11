@@ -254,6 +254,25 @@ def test_run_evaluation_end_to_end(trained, prepared, cfg, tmp_path):
     assert (saved / "decision_curve.csv").is_file()
 
 
+def test_bias_paragraph_labels_scenarios_as_assumed(trained, prepared, cfg, tmp_path):
+    """Regression: hypothetical outcome assignments must not be worded as observed results."""
+    from creditiq.reporting.markdown import bias_paragraph
+
+    _, models_dir = trained
+    local_cfg = cfg.with_overrides({"paths": {"models_dir": str(models_dir)}})
+    out = run_evaluation(prepared.data, local_cfg, "applicant", clean_all=prepared.cleaned_all)
+    text = bias_paragraph(
+        {
+            "metadata": {"selected_model": out.selected_model},
+            "unresolved_bounds": out.tables["unresolved_bounds"],
+            "sensitivity_36_month": out.tables["sensitivity_36_month"],
+        }
+    )
+    assert "assumed" in text and "not observed outcomes" in text
+    assert "realistic" not in text
+    assert "scenario rate" in text
+
+
 def test_threshold_metrics_from_bins_match_exact(trained, prepared):
     from creditiq.models.evaluate import threshold_metrics
     from creditiq.models.evaluation_run import score_distribution

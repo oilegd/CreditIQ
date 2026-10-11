@@ -14,6 +14,13 @@ interactive Streamlit dashboard. Every number in this README was produced by the
 the real dataset; the full, generated results are in
 [`reports/evaluation_summary.md`](reports/evaluation_summary.md).
 
+**Technology stack:** Python 3.12 · pandas · NumPy · PyArrow · DuckDB (SQL) · scikit-learn ·
+LightGBM · SHAP · LIME-style surrogates (own implementation) · SciPy · NetworkX · ripser ·
+Altair / Matplotlib / Seaborn · Streamlit · pytest · Ruff · GitHub Actions.
+
+**Repository:** <https://github.com/oilegd/CreditRiskPredictionBankingI> · **Live demo:** not
+deployed yet (see [Deployment](#18-deployment-streamlit-community-cloud)).
+
 ---
 
 ## 1. Project overview
@@ -169,7 +176,7 @@ Out-of-time **test** set: loans issued 2014-07 to 2014-12, n = 123,634, adverse 
 2014 Q2 (52,456). Selection, calibration and thresholds never used the test set (verified by
 retraining with scrambled test labels and perturbed test features: bit-identical artifacts).
 
-| Feature set | Model | Test ROC-AUC [95% CI] | **Incl. excluded loans (realistic)** | 36-month only | PR-AUC | Brier |
+| Feature set | Model | Test ROC-AUC [95% CI] | Incl. excluded loans (assumed scenario†) | 36-month only | PR-AUC | Brier |
 | --- | --- | --- | --- | --- | --- | --- |
 | - | Dummy (prior) | 0.500 | - | - | 0.191 | 0.1558 |
 | applicant | Logistic regression | 0.695 [0.692, 0.699] | 0.670 | 0.647 | 0.348 | 0.1426 |
@@ -177,24 +184,28 @@ retraining with scrambled test labels and perturbed test features: bit-identical
 | origination | Logistic regression | 0.712 [0.708, 0.715] | 0.692 | 0.675 | 0.354 | 0.1409 |
 | origination | LightGBM - selected | 0.715 [0.711, 0.719] | 0.697 | 0.681 | 0.364 | 0.1404 |
 
+† Hypothetical: the outcomes of excluded unresolved loans are unknown and are *assumed*
+(Current/Grace → repaid, Late → adverse). These are sensitivity values, not observed results.
+
 How to read this:
 
-* **The reported test ROC-AUC is optimistic.** 9,236 test-window loans (2014 60-month
-  survivors) were excluded as unresolved. Scoring them and adding them back with realistic
-  labels (Current/Grace → repaid, Late → adverse) gives **0.674** for the selected model
-  (all repaid: 0.671; implausible all-adverse bound: 0.732). On fully resolved 36-month loans,
-  which have no exclusion bias, it is 0.653 (`term` is constant there).
+* **The reported test ROC-AUC (0.698) is likely optimistic.** 9,236 test-window loans (2014
+  60-month survivors) were excluded as unresolved; their true outcomes are unknown. Adding them
+  back under the assumed labels above gives 0.674 for the selected model (assuming all repaid:
+  0.671; implausible all-adverse bound: 0.732). The only exclusion-free observed result is on
+  fully resolved 36-month loans: 0.653 (`term`, the strongest predictor, is constant there).
 * **Calibration.** Calibration on 2014 Q2 reduced the reported test ECE from 0.031 to 0.007,
-  and 36-month loans are well calibrated (predicted 0.142 vs observed 0.141). But the
-  calibration split shares the exclusion bias, so with realistic labels **60-month loans are
-  over-predicted** (observed 0.263 vs predicted 0.299). The TDA diagnostics independently
-  find the same over-predicted 60-month regions on the validation split.
+  and 36-month loans are well calibrated on observed outcomes (predicted 0.142 vs observed
+  0.141). The calibration split shares the exclusion bias, however; under the assumed scenario
+  60-month loans would be over-predicted (scenario rate 0.263 vs predicted 0.299). Consistent
+  with this, the TDA diagnostics on the validation split find regions dominated by long-term
+  loans where the mean prediction exceeds the observed adverse rate.
 * Both models clearly beat the dummy. LightGBM's AUC edge over logistic regression is
   statistically detectable but practically small: +0.0029 (paired bootstrap 95% CI
   [0.0014, 0.0042]). Bootstrap CIs resample loans i.i.d. within one 6-month window and do
   not capture period-to-period variation or the exclusion bias, which is larger.
-* A stratified random split gives AUC 0.689, between the realistic (0.674) and reported
-  (0.698) out-of-time values.
+* A stratified random split gives AUC 0.689, between the assumed-scenario (0.674) and
+  reported (0.698) out-of-time values.
 * Lending Club's own grade and rate (origination model) add about +0.02 AUC. That
   information encodes Lending Club's own underwriting and is not available pre-decision.
 * At the F1-optimal threshold chosen on calibration data (0.202): precision 0.312,
@@ -263,7 +274,7 @@ to SHAP. None of these methods measure causal effects.
 
 * Retrospective lifetime outcome on resolved loans; not a fixed-horizon or regulatory PD.
 * Selection bias (approved loans only) and exclusion bias in 2014 60-month vintages.
-  Headline metrics are optimistic, and realistic bounds are reported.
+  Headline metrics are likely optimistic; assumed-outcome sensitivity bounds are reported.
 * Calibration was fitted on a split with the same exclusion bias. 60-month PDs are likely
   overstated.
 * Temporal drift: one 6-month test window; calibration may not transfer.
@@ -282,6 +293,28 @@ to SHAP. None of these methods measure causal effects.
 * Rolling-origin evaluation and block bootstrap by issue month.
 * Test TDA-suggested segment recalibration on later vintages; monitor topological drift.
 * Reject inference; monotonic constraints and a scorecard (WoE/IV) baseline.
+
+## 18. Deployment (Streamlit Community Cloud)
+
+Not deployed yet. The app runs from the repository with only `requirements.txt` installed
+(it falls back to `src/` when the `creditiq` package is not installed) and reads
+[`.streamlit/config.toml`](.streamlit/config.toml), which hides error details from visitors.
+
+1. In Community Cloud choose this repository, branch `main`, entry point
+   `app/streamlit_app.py`, and **Python 3.12** under *Advanced settings* (the pinned
+   pandas/NumPy versions require Python ≥ 3.11). No secrets are needed.
+2. **Runtime artifacts are git-ignored** (`models/`, `reports/metrics/`, `data/processed/tda/`).
+   Without them the deployed app shows setup messages instead of predictions. Publishing them
+   is an explicit owner decision:
+   * `models/<feature_set>/*.joblib` + `metadata.json` (~0.7 MB) and the aggregate tables in
+     `reports/metrics/<feature_set>/` (~0.4 MB) contain fitted parameters and aggregates, not
+     loan records. Exclude `reports/metrics/data_profile.json` (it lists most-frequent raw
+     values). Joblib files are pickles: load only artifacts you produced yourself.
+   * `data/processed/tda/*.parquet` holds **row-level** standardised samples of real loans.
+     Do not publish them; the TDA page then shows its setup message (or deploy with
+     `CREDITIQ_SYNTHETIC=1` and synthetic artifacts for a demo).
+3. Measured locally: ~340 MB peak memory when rendering every page (Community Cloud limit:
+   690 MB-2.7 GB as of Feb 2024), first page render ~5 s, Mapper rebuild ~1-3 s (cached).
 
 ---
 

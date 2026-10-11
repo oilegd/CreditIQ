@@ -76,15 +76,15 @@ Paired bootstrap AUC(LightGBM) - AUC(LogReg) = **0.0029** (95% CI [0.0014, 0.004
 
 ### Headline caveat: sensitivity to excluded unresolved loans
 
-9,236 loans issued in the test window were excluded as unresolved (concentrated in 2014 60-month vintages). They are survivors at the snapshot, so excluding them enriches the remaining 60-month loans with charge-offs. Scoring them with the selected model (lightgbm) and adding them back:
+9,236 loans issued in the test window were excluded as unresolved (concentrated in 2014 60-month vintages); their true outcomes are unknown. They are survivors at the snapshot, so excluding them enriches the remaining 60-month loans with charge-offs. Scoring them with the selected model (lightgbm) and adding them back under **assumed** labels (hypothetical scenarios, not observed outcomes):
 
-* realistic labelling (Current/Grace repaid, Late adverse): ROC-AUC **0.6737** (reported 0.6983); adverse prevalence 0.1800 vs mean calibrated prediction 0.1918; 60-month loans: observed 0.2632 vs predicted 0.2988;
-* all unresolved repaid: ROC-AUC 0.6708;
+* assumed: Current/Grace repaid, Late adverse - ROC-AUC **0.6737** (reported 0.6983); scenario adverse rate 0.1800 vs mean calibrated prediction 0.1918; 60-month loans: scenario rate 0.2632 vs predicted 0.2988;
+* assumed: all unresolved repaid - ROC-AUC 0.6708;
 * extreme bound (all unresolved adverse - implausible): ROC-AUC 0.7319.
 
-On fully resolved 36-month loans (no exclusion bias) the ROC-AUC is **0.6530** with mean prediction 0.1419 vs observed 0.1413.
+On fully resolved 36-month loans (no exclusion bias, observed outcomes) the ROC-AUC is **0.6530** with mean prediction 0.1419 vs observed 0.1413.
 
-**Interpretation:** the reported test ROC-AUC (0.6983) is optimistic; a realistic estimate is about 0.674. On the reported test set 60-month loans appear under-predicted (observed 0.328 vs predicted 0.300); with realistic labels they are over-predicted (observed 0.263 vs predicted 0.299). The calibrator was fitted on 2014 Q2, which shares the same exclusion bias.
+**Interpretation:** the reported test ROC-AUC (0.6983) is likely optimistic: both plausible scenarios give lower values (0.671-0.674); only the implausible all-adverse bound is higher. The true value cannot be computed from this snapshot. On the reported test set 60-month loans appear under-predicted (observed 0.328 vs predicted 0.300); under the assumed scenario they would be over-predicted (scenario rate 0.263 vs predicted 0.299). The calibrator was fitted on 2014 Q2, which shares the same exclusion bias.
 
 | model | scenario | n | prevalence | mean_predicted | roc_auc | pr_auc | brier | prevalence_60m | mean_predicted_60m |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -322,15 +322,15 @@ Paired bootstrap AUC(LightGBM) - AUC(LogReg) = **0.0035** (95% CI [0.0023, 0.004
 
 ### Headline caveat: sensitivity to excluded unresolved loans
 
-9,236 loans issued in the test window were excluded as unresolved (concentrated in 2014 60-month vintages). They are survivors at the snapshot, so excluding them enriches the remaining 60-month loans with charge-offs. Scoring them with the selected model (lightgbm) and adding them back:
+9,236 loans issued in the test window were excluded as unresolved (concentrated in 2014 60-month vintages); their true outcomes are unknown. They are survivors at the snapshot, so excluding them enriches the remaining 60-month loans with charge-offs. Scoring them with the selected model (lightgbm) and adding them back under **assumed** labels (hypothetical scenarios, not observed outcomes):
 
-* realistic labelling (Current/Grace repaid, Late adverse): ROC-AUC **0.6966** (reported 0.7150); adverse prevalence 0.1800 vs mean calibrated prediction 0.1849; 60-month loans: observed 0.2632 vs predicted 0.2816;
-* all unresolved repaid: ROC-AUC 0.6945;
+* assumed: Current/Grace repaid, Late adverse - ROC-AUC **0.6966** (reported 0.7150); scenario adverse rate 0.1800 vs mean calibrated prediction 0.1849; 60-month loans: scenario rate 0.2632 vs predicted 0.2816;
+* assumed: all unresolved repaid - ROC-AUC 0.6945;
 * extreme bound (all unresolved adverse - implausible): ROC-AUC 0.7242.
 
-On fully resolved 36-month loans (no exclusion bias) the ROC-AUC is **0.6808** with mean prediction 0.1398 vs observed 0.1413.
+On fully resolved 36-month loans (no exclusion bias, observed outcomes) the ROC-AUC is **0.6808** with mean prediction 0.1398 vs observed 0.1413.
 
-**Interpretation:** the reported test ROC-AUC (0.7150) is optimistic; a realistic estimate is about 0.697. On the reported test set 60-month loans appear under-predicted (observed 0.328 vs predicted 0.287); with realistic labels they are over-predicted (observed 0.263 vs predicted 0.282). The calibrator was fitted on 2014 Q2, which shares the same exclusion bias.
+**Interpretation:** the reported test ROC-AUC (0.7150) is likely optimistic: both plausible scenarios give lower values (0.694-0.697); only the implausible all-adverse bound is higher. The true value cannot be computed from this snapshot. On the reported test set 60-month loans appear under-predicted (observed 0.328 vs predicted 0.287); under the assumed scenario they would be over-predicted (scenario rate 0.263 vs predicted 0.282). The calibrator was fitted on 2014 Q2, which shares the same exclusion bias.
 
 | model | scenario | n | prevalence | mean_predicted | roc_auc | pr_auc | brier | prevalence_60m | mean_predicted_60m |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |

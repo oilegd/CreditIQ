@@ -1,0 +1,8 @@
+# Streamlit settings for public deployment (local runs use the same file).
+
+[client]
+# Do not show stack traces / exception details to app visitors; details stay in server logs.
+showErrorDetails = "none"
+
+[browser]
+gatherUsageStats = false
