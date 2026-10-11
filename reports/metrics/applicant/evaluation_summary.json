@@ -1,0 +1,24 @@
+{
+  "auc_diff_lightgbm_minus_logreg": {
+    "point": 0.0029339695964569756,
+    "lower": 0.0013634946712304061,
+    "upper": 0.004234635043379728
+  },
+  "feature_set": "applicant",
+  "selected_model": "lightgbm",
+  "selected_threshold": 0.20223597869029325,
+  "selected_calibration": "sigmoid",
+  "test_n": 123634,
+  "test_prevalence": 0.1912499797790252,
+  "test_period": [
+    "2014-07-01",
+    "2014-12-01"
+  ],
+  "decision_assumptions": {
+    "lgd": 0.85,
+    "ead_fraction": 1.0,
+    "profit_rate_good_loan": 0.12
+  },
+  "decision_breakeven_pd": 0.12371134020618557,
+  "assumptions_are_hypothetical": true
+}

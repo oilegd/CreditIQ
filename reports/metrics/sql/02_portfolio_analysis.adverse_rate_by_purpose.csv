@@ -1,0 +1,14 @@
+purpose,n_loans,adverse_rate,volume_musd
+debt_consolidation,246504,0.1823,3740.48
+credit_card,95722,0.1444,1410.86
+home_improvement,22603,0.1548,318.58
+other,18880,0.1904,183.81
+major_purchase,7346,0.1518,81.19
+small_business,4921,0.264,78.13
+medical,3785,0.1855,33.55
+car,3719,0.1248,31.96
+moving,2327,0.2089,17.88
+vacation,2070,0.1676,12.69
+house,1817,0.1877,28.12
+wedding,1339,0.1359,14.74
+renewable_energy,241,0.195,2.53

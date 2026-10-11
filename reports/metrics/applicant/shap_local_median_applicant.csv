@@ -1,0 +1,26 @@
+feature,model_input_value,shap_log_odds,direction
+term_months,36.0,-0.22062749022072772,lowers risk
+inq_last_6mths,0.0,-0.15205675802280588,lowers risk
+home_ownership,0.0,-0.09574604029123214,lowers risk
+loan_to_income,0.1963709677419355,-0.06652560351067623,lowers risk
+mths_since_last_major_derog,41.0,0.061952113294231836,raises risk
+mths_since_last_record,95.0,0.055064462527264366,raises risk
+loan_amnt,12175.0,-0.03549672710173722,lowers risk
+log_annual_inc,11.034905792929415,0.03506599526248331,raises risk
+revol_bal_to_income,0.20058064516129032,-0.03282116244092625,lowers risk
+revol_util,0.605,0.029321488983710713,raises risk
+open_to_total_acc,0.43478260869565216,-0.028515921244122184,lowers risk
+credit_history_months,171.0,0.02388347396491931,raises risk
+log_revol_bal,9.42843117965374,0.011901839021782505,raises risk
+open_acc,10.0,-0.006792509730522991,lowers risk
+dti,16.78,0.005216705894572768,raises risk
+delinq_2yrs,0.0,-0.003561728264400175,lowers risk
+has_delinq_history,1.0,0.003071783167467405,raises risk
+purpose,2.0,-0.002397469796192363,lowers risk
+mths_since_last_delinq,32.0,0.0021107924922497538,raises risk
+has_major_derog,1.0,0.002084643301385831,raises risk
+emp_length_years,10.0,-0.001604197356270878,lowers risk
+has_public_record,1.0,0.001291150791190332,raises risk
+total_acc,23.0,-0.0012156688702972967,lowers risk
+pub_rec,0.0,-0.0006164875022476961,lowers risk
+collections_12_mths_ex_med,0.0,0.0,lowers risk

@@ -1,0 +1,20 @@
+feature,condition,weight
+term,term = 36 months,-0.1248800349734614
+inq_last_6mths,inq_last_6mths <= 0,-0.051031512372407994
+home_ownership,home_ownership = MORTGAGE,-0.030680333046909248
+loan_amnt,"8,000 < loan_amnt <= 1.218e+04",-0.028725029162997386
+earliest_cr_line,1994-04-01 < earliest_cr_line <= 1999-02-01,-0.011161498807791274
+annual_inc,4.5e+04 < annual_inc <= 6.2e+04,0.010806576137138183
+emp_length,emp_length = 10+ years,0.010588820136534834
+collections_12_mths_ex_med,collections_12_mths_ex_med <= 0,0.01002286355097374
+mths_since_last_delinq,17 < mths_since_last_delinq <= 32,-0.00788856394571538
+revol_util,0.425 < revol_util <= 0.605,-0.006645942949065717
+mths_since_last_major_derog,25 < mths_since_last_major_derog <= 41,0.0063190334091440216
+dti,11.34 < dti <= 16.78,-0.006019477356626531
+total_acc,16 < total_acc <= 23,0.0056782888597497645
+pub_rec,pub_rec <= 0,-0.005399924262353448
+purpose,purpose = debt_consolidation,-0.0035354745344137297
+mths_since_last_record,69 < mths_since_last_record <= 95,0.003193321197510954
+delinq_2yrs,delinq_2yrs <= 0,-0.001943000414613782
+revol_bal,"7,132 < revol_bal <= 1.244e+04",-0.0016988348061399176
+open_acc,8 < open_acc <= 10,-0.00017431218712055064

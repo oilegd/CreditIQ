@@ -1,0 +1,3 @@
+design,test_n,roc_auc
+out-of-time split (configured issue-date boundaries),123634,0.715043016330443
+stratified random split (all vintages),102819,0.7059636397913802

@@ -1,0 +1,2 @@
+non_positive_loan_amnt,non_positive_annual_inc,dti_out_of_range,revol_util_out_of_range,int_rate_out_of_range,open_exceeds_total_acc,credit_line_after_issue,funded_differs_from_requested
+0.0,0.0,0.0,0.0,0.0,0.0,0.0,65.0
