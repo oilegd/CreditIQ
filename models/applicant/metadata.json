@@ -1,0 +1,815 @@
+{
+  "project_version": "0.1.0",
+  "feature_set": "applicant",
+  "feature_set_description": "Conservative applicant-information model. Uses only attributes supplied by the applicant or drawn from the credit bureau at application time. Excludes Lending Club's own grading, pricing and verification outputs.",
+  "selected_model": "lightgbm",
+  "selection_metric": "roc_auc",
+  "target": {
+    "name": "is_adverse",
+    "positive_statuses": [
+      "Charged Off",
+      "Default"
+    ],
+    "negative_statuses": [
+      "Fully Paid"
+    ],
+    "excluded_statuses": [
+      "Current",
+      "In Grace Period",
+      "Late (16-30 days)",
+      "Late (31-120 days)"
+    ]
+  },
+  "split": {
+    "strategy": "out_of_time",
+    "train": {
+      "n": 188171,
+      "adverse_rate": 0.15766510248656807,
+      "first_issue": "2012-01-01",
+      "last_issue": "2013-12-01"
+    },
+    "validation": {
+      "n": 47013,
+      "adverse_rate": 0.16486929147257143,
+      "first_issue": "2014-01-01",
+      "last_issue": "2014-03-01"
+    },
+    "calibration": {
+      "n": 52456,
+      "adverse_rate": 0.18617508006710387,
+      "first_issue": "2014-04-01",
+      "last_issue": "2014-06-01"
+    },
+    "test": {
+      "n": 123634,
+      "adverse_rate": 0.1912499797790252,
+      "first_issue": "2014-07-01",
+      "last_issue": "2014-12-01"
+    }
+  },
+  "input_columns": [
+    "loan_amnt",
+    "annual_inc",
+    "dti",
+    "delinq_2yrs",
+    "inq_last_6mths",
+    "mths_since_last_delinq",
+    "mths_since_last_record",
+    "mths_since_last_major_derog",
+    "open_acc",
+    "pub_rec",
+    "revol_bal",
+    "revol_util",
+    "total_acc",
+    "collections_12_mths_ex_med",
+    "term",
+    "emp_length",
+    "home_ownership",
+    "purpose",
+    "earliest_cr_line",
+    "issue_d"
+  ],
+  "engineered_numeric_features": [
+    "loan_amnt",
+    "log_annual_inc",
+    "dti",
+    "delinq_2yrs",
+    "inq_last_6mths",
+    "mths_since_last_delinq",
+    "mths_since_last_record",
+    "mths_since_last_major_derog",
+    "open_acc",
+    "pub_rec",
+    "log_revol_bal",
+    "revol_util",
+    "total_acc",
+    "collections_12_mths_ex_med",
+    "loan_to_income",
+    "revol_bal_to_income",
+    "open_to_total_acc",
+    "has_delinq_history",
+    "has_public_record",
+    "has_major_derog",
+    "term_months",
+    "emp_length_years",
+    "credit_history_months"
+  ],
+  "engineered_categorical_features": [
+    "home_ownership",
+    "purpose"
+  ],
+  "models": {
+    "dummy": {
+      "best_params": {
+        "strategy": "prior"
+      },
+      "calibration_method": "none",
+      "threshold": 0.5,
+      "fit_seconds": 0.779306499985978
+    },
+    "logistic_regression": {
+      "best_params": {
+        "C": 0.01,
+        "class_weight": null
+      },
+      "calibration_method": "sigmoid",
+      "threshold": 0.18815283486366252,
+      "fit_seconds": 10.691066600003978
+    },
+    "lightgbm": {
+      "best_params": {
+        "num_leaves": 63,
+        "min_child_samples": 500,
+        "reg_lambda": 5.0,
+        "best_iteration": 128
+      },
+      "calibration_method": "sigmoid",
+      "threshold": 0.20223597869029325,
+      "fit_seconds": 31.451408799999626
+    }
+  },
+  "random_seed": 42,
+  "environment": {
+    "python": "3.12.13",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "pandas": "3.0.6",
+    "numpy": "2.5.4",
+    "scikit_learn": "1.9.1",
+    "lightgbm": "4.7.0",
+    "created_utc": "2026-10-11T21:47:51+00:00"
+  },
+  "config": {
+    "project": {
+      "name": "creditiq-lendingclub-risk",
+      "model_version": "0.1.0",
+      "random_seed": 42
+    },
+    "paths": {
+      "raw_file": "data/raw/12_13_14 Excel.xlsx",
+      "interim_dir": "data/interim",
+      "processed_dir": "data/processed",
+      "synthetic_dir": "data/synthetic",
+      "models_dir": "models",
+      "reports_dir": "reports",
+      "figures_dir": "reports/figures",
+      "metrics_dir": "reports/metrics",
+      "sql_dir": "sql"
+    },
+    "data": {
+      "excel_sheet": 0,
+      "id_column": null,
+      "duplicate_fingerprint": [
+        "loan_amnt",
+        "term",
+        "int_rate",
+        "installment",
+        "emp_title",
+        "annual_inc",
+        "issue_d",
+        "zip_code",
+        "dti",
+        "earliest_cr_line",
+        "revol_bal",
+        "open_acc",
+        "total_acc"
+      ],
+      "required_columns": [
+        "loan_amnt",
+        "term",
+        "emp_length",
+        "home_ownership",
+        "annual_inc",
+        "issue_d",
+        "loan_status",
+        "purpose",
+        "dti",
+        "delinq_2yrs",
+        "earliest_cr_line",
+        "inq_last_6mths",
+        "open_acc",
+        "pub_rec",
+        "revol_bal",
+        "revol_util",
+        "total_acc"
+      ],
+      "processed_drop_columns": [
+        "desc",
+        "title",
+        "emp_title",
+        "url",
+        "zip_code"
+      ],
+      "date_columns": [
+        "issue_d",
+        "earliest_cr_line",
+        "last_pymnt_d",
+        "next_pymnt_d",
+        "last_credit_pull_d"
+      ],
+      "percent_columns": [
+        "int_rate",
+        "revol_util"
+      ],
+      "valid_ranges": {
+        "loan_amnt": [
+          500,
+          40000
+        ],
+        "annual_inc": [
+          1,
+          100000000
+        ],
+        "dti": [
+          0,
+          100
+        ],
+        "revol_util": [
+          0,
+          2.0
+        ],
+        "int_rate": [
+          0,
+          1
+        ],
+        "delinq_2yrs": [
+          0,
+          100
+        ],
+        "inq_last_6mths": [
+          0,
+          100
+        ],
+        "open_acc": [
+          0,
+          200
+        ],
+        "pub_rec": [
+          0,
+          200
+        ],
+        "total_acc": [
+          0,
+          300
+        ],
+        "revol_bal": [
+          0,
+          100000000
+        ]
+      }
+    },
+    "target": {
+      "status_column": "loan_status",
+      "name": "is_adverse",
+      "positive_statuses": [
+        "Charged Off",
+        "Default"
+      ],
+      "negative_statuses": [
+        "Fully Paid"
+      ],
+      "excluded_statuses": [
+        "Current",
+        "In Grace Period",
+        "Late (16-30 days)",
+        "Late (31-120 days)"
+      ]
+    },
+    "split": {
+      "date_column": "issue_d",
+      "strategy": "out_of_time",
+      "train_end": "2013-12",
+      "validation_end": "2014-03",
+      "calibration_end": "2014-06",
+      "random_split": {
+        "test_size": 0.25,
+        "validation_size": 0.15,
+        "calibration_size": 0.15
+      }
+    },
+    "features": {
+      "default_set": "applicant",
+      "reference_date_column": "issue_d",
+      "sets": {
+        "applicant": {
+          "description": "Conservative applicant-information model. Uses only attributes supplied by the applicant or drawn from the credit bureau at application time. Excludes Lending Club's own grading, pricing and verification outputs.",
+          "allowed_categories": [
+            "pre_underwriting"
+          ],
+          "uncertain_allowlist": [
+            "mths_since_last_major_derog",
+            "loan_amnt"
+          ],
+          "numeric": [
+            "loan_amnt",
+            "annual_inc",
+            "dti",
+            "delinq_2yrs",
+            "inq_last_6mths",
+            "mths_since_last_delinq",
+            "mths_since_last_record",
+            "mths_since_last_major_derog",
+            "open_acc",
+            "pub_rec",
+            "revol_bal",
+            "revol_util",
+            "total_acc",
+            "collections_12_mths_ex_med"
+          ],
+          "categorical": [
+            "term",
+            "emp_length",
+            "home_ownership",
+            "purpose"
+          ],
+          "date": [
+            "earliest_cr_line"
+          ]
+        },
+        "origination": {
+          "description": "Loan-origination model. Adds Lending Club's sub-grade, interest rate, instalment, income-verification status and listing status, which are only known once Lending Club has assessed (and priced) the application. `grade` is not used separately because it is the first character of `sub_grade`.",
+          "extends": "applicant",
+          "allowed_categories": [
+            "pre_underwriting",
+            "at_origination",
+            "uncertain"
+          ],
+          "uncertain_allowlist": [],
+          "numeric": [
+            "int_rate",
+            "installment"
+          ],
+          "categorical": [
+            "sub_grade",
+            "verification_status",
+            "initial_list_status"
+          ],
+          "date": []
+        }
+      }
+    },
+    "feature_catalog": {
+      "loan_amnt": {
+        "category": "uncertain",
+        "rationale": "Listed loan amount. Lending Club's data dictionary states that if the credit department reduces the amount, the reduction is reflected here, so it is not purely the applicant's request. Allow-listed for the applicant model (no cleaner requested-amount field exists); flagged."
+      },
+      "funded_amnt": {
+        "category": "at_origination",
+        "rationale": "Amount committed by Lending Club during/after credit review. Differs from loan_amnt in only 65 rows. Not used."
+      },
+      "funded_amnt_inv": {
+        "category": "outcome_derived",
+        "rationale": "Amount funded by investors after listing; reflects post-decision market behaviour. Never used."
+      },
+      "term": {
+        "category": "pre_underwriting",
+        "rationale": "Loan term selected by the applicant (36/60 months)."
+      },
+      "int_rate": {
+        "category": "at_origination",
+        "rationale": "Price assigned by Lending Club from its own grade; a product of underwriting. Origination model only."
+      },
+      "installment": {
+        "category": "at_origination",
+        "rationale": "Deterministic function of amount, rate and term; inherits int_rate's timing. Origination model only."
+      },
+      "grade": {
+        "category": "at_origination",
+        "rationale": "Lending Club's internal risk grade - an output of its own credit model. Not used directly: it is the first character of sub_grade."
+      },
+      "sub_grade": {
+        "category": "at_origination",
+        "rationale": "Finer Lending Club risk grade - an output of its own credit model. Origination model only."
+      },
+      "emp_title": {
+        "category": "sensitive",
+        "rationale": "Free-text job title (~182k unique values); identifying and noisy. Excluded."
+      },
+      "emp_length": {
+        "category": "pre_underwriting",
+        "rationale": "Self-reported employment length."
+      },
+      "home_ownership": {
+        "category": "pre_underwriting",
+        "rationale": "Self-reported housing status."
+      },
+      "annual_inc": {
+        "category": "pre_underwriting",
+        "rationale": "Self-reported annual income."
+      },
+      "verification_status": {
+        "category": "uncertain",
+        "rationale": "Income-verification outcome produced during Lending Club review; may complete after listing. Origination model only."
+      },
+      "issue_d": {
+        "category": "identifier_metadata",
+        "rationale": "Issue month. Used for out-of-time splitting and as reference date for credit-history length; not a direct feature."
+      },
+      "loan_status": {
+        "category": "outcome_derived",
+        "rationale": "Outcome used to build the target. Never a feature."
+      },
+      "pymnt_plan": {
+        "category": "outcome_derived",
+        "rationale": "Flags a hardship payment plan, which only occurs after repayment problems."
+      },
+      "url": {
+        "category": "identifier_metadata",
+        "rationale": "Listing URL; 100% empty in this export."
+      },
+      "desc": {
+        "category": "sensitive",
+        "rationale": "Borrower free text (77% missing); may contain personal data and dated post-listing edits. Excluded."
+      },
+      "purpose": {
+        "category": "pre_underwriting",
+        "rationale": "Loan purpose selected by the applicant."
+      },
+      "title": {
+        "category": "sensitive",
+        "rationale": "Free-text loan title; redundant with purpose. Excluded."
+      },
+      "zip_code": {
+        "category": "sensitive",
+        "rationale": "3-digit ZIP prefix; geographic proxy that can encode protected characteristics. Excluded."
+      },
+      "addr_state": {
+        "category": "sensitive",
+        "rationale": "US state; geographic proxy. Excluded from models; descriptive portfolio analytics only."
+      },
+      "dti": {
+        "category": "pre_underwriting",
+        "rationale": "Debt-to-income from self-reported income and bureau debts (excluding the requested loan)."
+      },
+      "delinq_2yrs": {
+        "category": "pre_underwriting",
+        "rationale": "Bureau: 30+ day delinquencies in the past 2 years."
+      },
+      "earliest_cr_line": {
+        "category": "pre_underwriting",
+        "rationale": "Bureau: earliest credit line date; used to derive credit-history length. Correlates with age (a protected attribute) - see model card."
+      },
+      "inq_last_6mths": {
+        "category": "pre_underwriting",
+        "rationale": "Bureau: credit inquiries in the last 6 months."
+      },
+      "mths_since_last_delinq": {
+        "category": "pre_underwriting",
+        "rationale": "Bureau: months since last delinquency (missing = none on file)."
+      },
+      "mths_since_last_record": {
+        "category": "pre_underwriting",
+        "rationale": "Bureau: months since last public record (missing = none on file)."
+      },
+      "open_acc": {
+        "category": "pre_underwriting",
+        "rationale": "Bureau: number of open credit lines."
+      },
+      "pub_rec": {
+        "category": "pre_underwriting",
+        "rationale": "Bureau: number of derogatory public records."
+      },
+      "revol_bal": {
+        "category": "pre_underwriting",
+        "rationale": "Bureau: total revolving balance."
+      },
+      "revol_util": {
+        "category": "pre_underwriting",
+        "rationale": "Bureau: revolving utilisation rate (fraction)."
+      },
+      "total_acc": {
+        "category": "pre_underwriting",
+        "rationale": "Bureau: total number of credit lines."
+      },
+      "initial_list_status": {
+        "category": "at_origination",
+        "rationale": "Whole vs fractional listing, decided by Lending Club when listing. Origination model only."
+      },
+      "out_prncp": {
+        "category": "outcome_derived",
+        "rationale": "Outstanding principal at snapshot - repayment outcome."
+      },
+      "out_prncp_inv": {
+        "category": "outcome_derived",
+        "rationale": "Outstanding principal (investor share) at snapshot - repayment outcome."
+      },
+      "total_pymnt": {
+        "category": "outcome_derived",
+        "rationale": "Payments received to date - repayment outcome."
+      },
+      "total_pymnt_inv": {
+        "category": "outcome_derived",
+        "rationale": "Payments received to date (investor share) - repayment outcome."
+      },
+      "total_rec_prncp": {
+        "category": "outcome_derived",
+        "rationale": "Principal received to date - repayment outcome."
+      },
+      "total_rec_int": {
+        "category": "outcome_derived",
+        "rationale": "Interest received to date - repayment outcome."
+      },
+      "total_rec_late_fee": {
+        "category": "outcome_derived",
+        "rationale": "Late fees received - only exists after late payment."
+      },
+      "recoveries": {
+        "category": "outcome_derived",
+        "rationale": "Post charge-off recoveries - only exists after default."
+      },
+      "collection_recovery_fee": {
+        "category": "outcome_derived",
+        "rationale": "Post charge-off collection fee - only exists after default."
+      },
+      "last_pymnt_d": {
+        "category": "outcome_derived",
+        "rationale": "Date of last payment - repayment outcome."
+      },
+      "last_pymnt_amnt": {
+        "category": "outcome_derived",
+        "rationale": "Amount of last payment - repayment outcome."
+      },
+      "next_pymnt_d": {
+        "category": "outcome_derived",
+        "rationale": "Next scheduled payment; populated only for active loans (encodes the outcome)."
+      },
+      "last_credit_pull_d": {
+        "category": "outcome_derived",
+        "rationale": "Most recent bureau pull by Lending Club, months or years after origination."
+      },
+      "collections_12_mths_ex_med": {
+        "category": "pre_underwriting",
+        "rationale": "Bureau: collections in last 12 months excluding medical."
+      },
+      "mths_since_last_major_derog": {
+        "category": "uncertain",
+        "rationale": "Bureau: months since a 90+ day rating. Assumed as-of-application like other bureau fields, but refresh timing is undocumented in this export. Used in both models; flagged."
+      },
+      "policy_code": {
+        "category": "identifier_metadata",
+        "rationale": "Constant (=1) in this export."
+      },
+      "application_type": {
+        "category": "identifier_metadata",
+        "rationale": "Constant ('Individual') in this export."
+      }
+    },
+    "model": {
+      "primary_metric": "roc_auc",
+      "selection_tolerance": 0.0005,
+      "dummy": {
+        "strategy": "prior"
+      },
+      "logistic_regression": {
+        "max_iter": 2000,
+        "C_grid": [
+          0.01,
+          0.1,
+          1.0
+        ],
+        "class_weight_grid": [
+          null,
+          "balanced"
+        ],
+        "clip_quantiles": [
+          0.005,
+          0.995
+        ]
+      },
+      "lightgbm": {
+        "n_estimators": 2000,
+        "early_stopping_rounds": 100,
+        "learning_rate": 0.05,
+        "param_grid": [
+          {
+            "num_leaves": 15,
+            "min_child_samples": 200,
+            "reg_lambda": 1.0
+          },
+          {
+            "num_leaves": 31,
+            "min_child_samples": 200,
+            "reg_lambda": 1.0
+          },
+          {
+            "num_leaves": 63,
+            "min_child_samples": 500,
+            "reg_lambda": 5.0
+          },
+          {
+            "num_leaves": 31,
+            "min_child_samples": 100,
+            "reg_lambda": 0.0
+          }
+        ],
+        "fixed_params": {
+          "subsample": 0.8,
+          "subsample_freq": 1,
+          "colsample_bytree": 0.8,
+          "n_jobs": -1,
+          "verbose": -1
+        }
+      },
+      "calibration": {
+        "methods": [
+          "none",
+          "sigmoid",
+          "isotonic"
+        ],
+        "cv_folds": 5,
+        "selection_metric": "brier"
+      },
+      "threshold": {
+        "objective": "f1"
+      }
+    },
+    "evaluation": {
+      "bootstrap_reps": 200,
+      "bootstrap_ci": 0.95,
+      "calibration_bins": 10,
+      "shap_sample_size": 2000,
+      "permutation_sample_size": 5000,
+      "permutation_repeats": 5,
+      "random_split_benchmark": true,
+      "segments": {
+        "income_band": {
+          "column": "annual_inc",
+          "bins": [
+            0,
+            40000,
+            60000,
+            80000,
+            120000,
+            Infinity
+          ],
+          "label": "Annual income (USD)"
+        },
+        "loan_amount_band": {
+          "column": "loan_amnt",
+          "bins": [
+            0,
+            5000,
+            10000,
+            15000,
+            25000,
+            Infinity
+          ],
+          "label": "Loan amount (USD)"
+        },
+        "credit_history_band": {
+          "column": "credit_history_years",
+          "bins": [
+            0,
+            5,
+            10,
+            15,
+            20,
+            Infinity
+          ],
+          "label": "Credit history (years)"
+        },
+        "emp_length": {
+          "column": "emp_length",
+          "label": "Employment length"
+        },
+        "home_ownership": {
+          "column": "home_ownership",
+          "label": "Home ownership"
+        },
+        "term": {
+          "column": "term",
+          "label": "Term"
+        }
+      }
+    },
+    "decision": {
+      "lgd": 0.85,
+      "ead_fraction": 1.0,
+      "profit_rate_good_loan": 0.12,
+      "threshold_grid": [
+        0.05,
+        0.075,
+        0.1,
+        0.125,
+        0.15,
+        0.175,
+        0.2,
+        0.25,
+        0.3,
+        0.35,
+        0.4,
+        0.5
+      ],
+      "sensitivity": {
+        "lgd": [
+          0.6,
+          0.75,
+          0.85,
+          0.95
+        ],
+        "profit_rate_good_loan": [
+          0.06,
+          0.09,
+          0.12,
+          0.15
+        ]
+      },
+      "risk_buckets": [
+        {
+          "name": "A - Very low",
+          "upper": 0.08
+        },
+        {
+          "name": "B - Low",
+          "upper": 0.14
+        },
+        {
+          "name": "C - Moderate",
+          "upper": 0.22
+        },
+        {
+          "name": "D - High",
+          "upper": 0.32
+        },
+        {
+          "name": "E - Very high",
+          "upper": 1.000001
+        }
+      ]
+    },
+    "explainability": {
+      "lime_samples": 3000,
+      "lime_global_rows": 150,
+      "lime_stability_seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "pfi_groups": {
+        "income_and_loan_size": [
+          "annual_inc",
+          "loan_amnt"
+        ],
+        "revolving_credit": [
+          "revol_bal",
+          "revol_util"
+        ],
+        "credit_lines": [
+          "open_acc",
+          "total_acc"
+        ],
+        "delinquency_history": [
+          "delinq_2yrs",
+          "mths_since_last_delinq"
+        ],
+        "derogatory_records": [
+          "pub_rec",
+          "mths_since_last_record",
+          "mths_since_last_major_derog",
+          "collections_12_mths_ex_med"
+        ],
+        "credit_history_length": [
+          "earliest_cr_line"
+        ],
+        "inquiries": [
+          "inq_last_6mths"
+        ],
+        "loan_terms": [
+          "term",
+          "purpose"
+        ],
+        "borrower_profile": [
+          "emp_length",
+          "home_ownership"
+        ],
+        "lending_club_pricing": [
+          "sub_grade",
+          "int_rate",
+          "installment"
+        ],
+        "lending_club_process": [
+          "verification_status",
+          "initial_list_status"
+        ]
+      },
+      "dependence_bins": 20
+    },
+    "tda": {
+      "sample_size": 6000,
+      "splits": [
+        "validation",
+        "test"
+      ],
+      "default_split": "validation",
+      "mapper": {
+        "n_intervals": 12,
+        "overlap": 0.45,
+        "min_cluster_size": 8,
+        "eps_quantile": 0.5,
+        "knn_k": 15
+      },
+      "persistence_sample": 600
+    }
+  }
+}
