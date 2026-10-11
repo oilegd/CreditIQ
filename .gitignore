@@ -1,0 +1,44 @@
+# --- Data (never commit raw/derived Lending Club records) ---
+data/raw/*
+data/interim/*
+data/processed/*
+data/synthetic/*
+!data/**/.gitkeep
+*.xlsx
+*.xls
+*.parquet
+*.csv
+!sql/*.csv
+
+# --- Model artifacts (derived from restricted data; regenerate locally) ---
+models/*
+!models/.gitkeep
+
+# --- Generated metric tables (regenerate with scripts/evaluate_model.py) ---
+reports/metrics/*
+!reports/metrics/.gitkeep
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.env
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+.coverage
+htmlcov/
+
+# --- Editors / OS ---
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+.streamlit/secrets.toml

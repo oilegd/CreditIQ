@@ -1,0 +1,72 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "creditiq-lendingclub-risk"
+version = "0.1.0"
+description = "CreditIQ: Explainable credit risk scoring & decision intelligence on Lending Club 2012-2014 data (educational portfolio project)."
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+license = { text = "MIT" }
+authors = [{ name = "Onur Ilgezdi" }]
+dependencies = [
+    "pandas>=2.2",
+    "numpy>=1.26",
+    "pyarrow>=15",
+    "duckdb>=1.0",
+    "scikit-learn>=1.5",
+    "lightgbm>=4.3",
+    "shap>=0.45",
+    "matplotlib>=3.8",
+    "seaborn>=0.13",
+    "scipy>=1.11",
+    "streamlit>=1.40",
+    "joblib>=1.3",
+    "pyyaml>=6.0",
+    "openpyxl>=3.1",
+    "altair>=5.0",
+    "networkx>=3.0",
+]
+
+[project.optional-dependencies]
+# Persistent homology in dimension 1 (loops); H0 works without it.
+tda = ["ripser>=0.6"]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.5",
+    "nbformat>=5.9",
+    "nbconvert>=7.16",
+    "ipykernel>=6.29",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+filterwarnings = [
+    "ignore::DeprecationWarning:shap.*",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["notebooks"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "N"]
+ignore = ["N803", "N806"]
+
+[tool.ruff.lint.per-file-ignores]
+# Markdown report templates contain long table rows by design.
+"src/creditiq/reporting/markdown.py" = ["E501"]
+# UI layers: long user-facing captions and chart encodings.
+"src/creditiq/reporting/interactive.py" = ["E501"]
+"app/streamlit_app.py" = ["E402", "E501"]
+# Entry points select the matplotlib backend before other imports.
+"scripts/generate_reports.py" = ["E402"]
+
+[tool.ruff.format]
+quote-style = "double"

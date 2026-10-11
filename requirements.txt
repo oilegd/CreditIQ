@@ -1,0 +1,27 @@
+# Exact versions the pipeline was validated with (Python 3.12.13, Windows 11).
+# The package itself declares compatible lower bounds in pyproject.toml.
+# Install:  pip install -r requirements.txt  &&  pip install -e . --no-deps
+pandas==3.0.6
+numpy==2.5.4
+pyarrow==25.0.1
+duckdb==1.5.6
+scikit-learn==1.9.1
+lightgbm==4.7.0
+shap==0.53.0
+matplotlib==3.11.2
+seaborn==0.13.2
+scipy==1.18.1
+streamlit==1.65.0
+joblib==1.6.0
+PyYAML==6.0.3
+openpyxl==3.1.5
+altair==6.3.0
+networkx==3.7
+# optional tda extra
+ripser==0.6.15
+# dev
+pytest==9.1.1
+ruff==0.17.0
+nbformat
+nbconvert
+ipykernel
