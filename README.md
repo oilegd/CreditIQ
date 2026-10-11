@@ -1,12 +1,10 @@
 # CreditIQ: Explainable Credit Risk Scoring & Decision Intelligence
 
-**Lending Club 2012–2014 data (CC0)**
+**Lending Club 2012–2014 · leakage-controlled · out-of-time validated · calibrated · SHAP / LIME / PFI · topological data analysis**
 
 > **Educational portfolio project.** Nothing in this repository is validated or approved for real-world lending decisions. Model scores are **not** regulatory probabilities of default.
 
-CreditIQ is an end-to-end, reproducible credit-risk system:
-
-Data validation → target definition → feature-availability (leakage) audit → feature engineering → Dummy / Logistic Regression / LightGBM → probability calibration → out-of-time evaluation with uncertainty and bias bounds → SHAP, LIME and permutation importance → topological data analysis (Mapper, persistent homology) → segment analysis → a **hypothetical** decision simulation → an interactive Streamlit dashboard.
+CreditIQ is an end-to-end, reproducible credit-risk system: data validation → target definition → feature-availability (leakage) audit → feature engineering → Dummy / Logistic Regression / LightGBM → probability calibration → out-of-time evaluation with uncertainty and bias bounds → SHAP, LIME and permutation importance → topological data analysis (Mapper, persistent homology) → segment analysis → a **hypothetical** decision simulation → an interactive Streamlit dashboard.
 
 Every number in this README was produced by the pipeline on the real dataset; the full, generated results are in [`reports/evaluation_summary.md`](reports/evaluation_summary.md).
 
@@ -14,7 +12,7 @@ Every number in this README was produced by the pipeline on the real dataset; th
 
 **Repository:** https://github.com/oilegd/CreditIQ
 
-**Live Demo:** https://creditiq-riskanalysis.streamlit.app/
+**Live Streamlit Demo:** https://creditiq-riskanalysis.streamlit.app/
 
 ---
 
@@ -33,18 +31,14 @@ Every number in this README was produced by the pipeline on the real dataset; th
 
 ## 2. Business problem
 
-A lender must decide, at application time, whether (and at what risk) to extend credit.
-
-The model estimates the probability that a loan ends in an **adverse outcome** using only information available at that point.
+A lender must decide, at application time, whether (and at what risk) to extend credit. The model estimates the probability that a loan ends in an **adverse outcome** using only information available at that point.
 
 Explanations show *why* a score is high, topological maps show *where* in the applicant space the model is weak, and a separate simulation shows how scores *could* inform cut-offs under explicit, hypothetical economics.
 
 ## 3. Dataset source and licensing notes
 
 - **Source:** Sharar, M. Labib (2021). *12_13_14 Excel.xlsx*. Figshare. Dataset. https://doi.org/10.6084/m9.figshare.15074250.v1
-  - One sheet (`2012_13_14`)
-  - 423,810 loans × 51 columns
-  - Approximately 125 MB
+  - One sheet (`2012_13_14`), 423,810 loans × 51 columns, approximately 125 MB.
   - Original publisher of the loan records: Lending Club.
 
 - **Stated licence on Figshare:** CC0 1.0. A Figshare licence covers the uploader's contribution; it does **not** necessarily extinguish rights or terms attached by the original publisher (Lending Club). Treat upstream terms as potentially applicable.
@@ -53,7 +47,7 @@ Explanations show *why* a score is high, topological maps show *where* in the ap
 
 - **Provenance caveat:** The Figshare description says "funded and matured loans", but the file contains 12,536 loans that were still `Current`, `Late` or `In Grace Period` at the snapshot (about March 2019).
 
-- **Repository artifacts:** The original Lending Club workbook is not included in the current repository. Selected trained model bundles, evaluation outputs and reduced TDA Parquet samples were added for the public Streamlit demonstration. The repository does not use Git LFS. The MIT [`LICENSE`](LICENSE) covers only original code.
+- **Repository artifacts:** The original Lending Club Excel workbook and full raw data pipeline outputs are not included in the public repository. Selected trained model artifacts, evaluation metrics and reduced TDA Parquet samples are included to support the live Streamlit demonstration. The repository does not use Git LFS. The MIT [`LICENSE`](LICENSE) covers only original code.
 
 ## 4. Modelling assumptions
 
@@ -75,14 +69,14 @@ config/config.yaml        single source of truth
 
 src/creditiq/
   config.py, cli.py       config, project root, logging; shared script helpers
-  data/                   load (CSV/Excel/Parquet + cache) · validate · clean · target · split · pipeline · synthetic
-  features/               build_features (stateless engineering + train-only preprocessors) · leakage_checks
-  models/                 train (bounded grids, tie-break) · calibrate · evaluate · evaluation_run · predict · artifacts
-  explainability/         shap_analysis · lime_tabular · permutation (single + grouped) · suite (agreement)
+  data/                   load · validate · clean · target · split · pipeline · synthetic
+  features/               build_features · leakage_checks
+  models/                 train · calibrate · evaluate · evaluation_run · predict · artifacts
+  explainability/         shap_analysis · lime_tabular · permutation · suite
   tda/                    mapper · lenses · persistence · point_cloud · insights · build
-  risk/                   decision_analysis (EL, cut-offs, sensitivity, buckets) · segments
-  analytics/              duckdb_queries (named-query runner for sql/*.sql)
-  reporting/              figures (static) · interactive (Altair) · markdown writers · results loader
+  risk/                   decision_analysis · segments
+  analytics/              duckdb_queries
+  reporting/              figures · interactive · markdown writers · results loader
 
 scripts/                  inspect_data → prepare_data → train_model → evaluate_model → generate_reports
 
@@ -93,7 +87,7 @@ app/streamlit_app.py      dashboard (reads saved artifacts and local samples onl
 
 Requires Python **3.11 or 3.12**.
 
-Using [uv](https://docs.astral.sh/uv/) (or plain `venv`):
+Using [uv](https://docs.astral.sh/uv/) or plain `venv`:
 
 ```powershell
 # From the repository root
@@ -178,9 +172,9 @@ streamlit run app/streamlit_app.py
 | Topology (TDA) | Interactive Mapper graph (lens, resolution, overlap, scale; zoom/pan/click-to-inspect), PCA view, persistence diagrams and barcodes, evidence-based improvement ideas, stability across resolutions |
 | Model Documentation | Model card, leakage audit, evaluation summary, data dictionary, methodology |
 
-The app never trains; it caches saved artifacts, aggregate tables and local TDA samples.
+The application uses previously trained models and generated reports. It does **not** train models at runtime.
 
-Required runtime artifacts are included in the public deployment repository. If an artifact is unavailable, the affected page displays a setup message instead of predictions.
+Selected model bundles, evaluation artifacts and TDA samples are included in the repository for the deployed dashboard. If a required artifact is unavailable, the affected page displays a setup message rather than generating unsupported predictions.
 
 ## 12. Model comparison results (measured)
 
@@ -295,13 +289,13 @@ None of these methods measure causal effects.
 
 ## 18. Deployment (Streamlit Community Cloud)
 
-CreditIQ has been deployed using **Streamlit Community Cloud**.
+**Deployment status: LIVE**
 
 **Live application:** https://creditiq-riskanalysis.streamlit.app/
 
 **GitHub repository:** https://github.com/oilegd/CreditIQ
 
-Deployment configuration:
+CreditIQ is deployed on Streamlit Community Cloud using the following configuration:
 
 | Setting | Value |
 | --- | --- |
@@ -310,23 +304,23 @@ Deployment configuration:
 | Entry point | `app/streamlit_app.py` |
 | Python | 3.12 |
 | Dependencies | Root `requirements.txt` |
-| Deployment platform | Streamlit Community Cloud |
+| Platform | Streamlit Community Cloud |
 
-The application runs with the dependencies in `requirements.txt` (falling back to `src/` when the `creditiq` package is not installed) and reads [`.streamlit/config.toml`](.streamlit/config.toml), which hides error details from visitors.
+The application runs with dependencies from `requirements.txt` and reads [`.streamlit/config.toml`](.streamlit/config.toml), which hides error details from visitors.
 
 ### Runtime artifacts
 
-The public repository includes selected runtime artifacts required by Streamlit:
+The public repository includes selected artifacts required by the deployed dashboard:
 
 - **Trained models:** `models/<feature_set>/*.joblib` and `metadata.json`.
-- **Evaluation outputs:** Selected files under `reports/metrics/`.
-- **TDA artifacts:** Reduced Parquet samples under `data/processed/tda/`.
+- **Evaluation results:** Selected generated files under `reports/metrics/`.
+- **TDA point clouds:** Four reduced Parquet samples under `data/processed/tda/`.
 
-These files allow Streamlit to load previously generated results without retraining the machine learning models.
+These artifacts allow the dashboard to provide model predictions, explanations, evaluation visualizations and TDA analysis without retraining models in Streamlit.
 
 The original Lending Club Excel workbook is not included in the repository.
 
-The published TDA Parquet files contain reduced, row-level derived samples rather than exclusively aggregated diagrams. Joblib artifacts use Python pickle serialization and should only be loaded from trusted sources.
+The published TDA Parquet samples contain derived, row-level data. They should not be described as fully anonymized or exclusively aggregated. Joblib files use Python pickle serialization and should only be loaded from trusted sources.
 
 ### Runtime characteristics
 
@@ -344,9 +338,9 @@ Actual cloud performance depends on available resources.
 streamlit run app/streamlit_app.py
 ```
 
-The app does not retrain models during inference. It reads precomputed model bundles, evaluation outputs and TDA artifacts.
+The application reads precomputed model bundles, evaluation outputs and TDA artifacts. It does not retrain models during inference.
 
-If required runtime artifacts are unavailable, the affected page displays a setup message rather than fabricated predictions.
+If a required artifact is unavailable, the affected page displays a setup message rather than fabricated predictions.
 
 ---
 
